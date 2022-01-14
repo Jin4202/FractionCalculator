@@ -1,4 +1,4 @@
-package com.example.fractioncalculator;
+package com.calculator.fractioncalculator;
 
 import androidx.appcompat.app.AppCompatActivity;
 

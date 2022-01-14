@@ -1,4 +1,4 @@
-package com.example.fractioncalculator;
+package com.calculator.fractioncalculator;
 
 import org.junit.Test;
 
@@ -14,4 +14,6 @@ public class ExampleUnitTest {
     public void addition_isCorrect() {
         assertEquals(4, 2 + 2);
     }
+
+
 }
