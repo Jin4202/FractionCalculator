@@ -1,23 +1,26 @@
 package com.calculator.fractioncalculator.calculation;
 
 public class Expression {
-    private Literal n1;
+    private Literal literal;
+    private Expression expr1;
     private Operator op;
-    private Literal n2;
+    private Expression expr2;
 
     public Expression(Literal n1) {
-        this.n1 = n1;
+        this.literal = n1;
+        expr1 = null;
         op = null;
-        n2 = null;
+        expr2 = null;
     }
 
-    public Expression(Literal n1, Operator op, Literal n2) {
-        this.n1 = n1;
+    public Expression(Expression n1, Operator op, Expression n2) {
+        literal = null;
+        this.expr1 = n1;
         this.op = op;
-        this.n2 = n2;
+        this.expr2 = n2;
     }
 
     public Literal getOutput() {
-        return op.calculate(n1, n2);
+        return literal != null ? literal : op.calculate(expr1.getOutput(), expr2.getOutput());
     }
 }
