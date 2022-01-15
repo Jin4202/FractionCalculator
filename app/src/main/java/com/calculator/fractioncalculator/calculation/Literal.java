@@ -15,10 +15,34 @@ public class Literal {
         eDenominator = e2;
         pNumerator = p1;
         pDenominator = p2;
+        reduce();
     }
 
     private void reduce() {
+        int gcd1 = gcd(Math.abs(numerator), Math.abs(denominator));
+        int gcd2 = gcd(Math.abs(eNumerator), Math.abs(eDenominator));
+        int gcd3 = gcd(Math.abs(pNumerator), Math.abs(pDenominator));
+        numerator /= gcd1;
+        denominator /= gcd1;
+        eNumerator /= gcd2;
+        eDenominator /= gcd2;
+        pNumerator /= gcd3;
+        pDenominator /= gcd3;
+    }
 
+    private int gcd(int i, int j) {
+        while(j > 0) {
+            if(i < j) {
+                int tmp = i;
+                i = j;
+                j = tmp;
+            } else {
+                int tmp = j;
+                j = i%j;
+                i = tmp;
+            }
+        }
+        return i;
     }
 
     public int getNumerator() {
