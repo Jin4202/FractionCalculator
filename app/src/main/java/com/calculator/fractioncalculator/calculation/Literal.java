@@ -1,6 +1,6 @@
 package com.calculator.fractioncalculator.calculation;
 
-public class Literal {
+public class Literal implements Element, Calculatetable{
     private int numerator;
     private int denominator;
     private int eNumerator;
@@ -67,5 +67,10 @@ public class Literal {
 
     public int getpNumerator() {
         return pNumerator;
+    }
+
+    @Override
+    public Literal getOutput() {
+        return this;
     }
 }
