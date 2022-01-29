@@ -1,11 +1,11 @@
 package com.calculator.fractioncalculator.calculation;
 
-public class Expression implements Calculatetable {
-    private Expression expr1;
+public class Expression implements Element, Calculatetable {
+    private Calculatetable expr1;
     private Operator op;
-    private Expression expr2;
+    private Calculatetable expr2;
 
-    public Expression(Expression n1, Operator op, Expression n2) {
+    public Expression(Calculatetable n1, Operator op, Calculatetable n2) {
         this.expr1 = n1;
         this.op = op;
         this.expr2 = n2;

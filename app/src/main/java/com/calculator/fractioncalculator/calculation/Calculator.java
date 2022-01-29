@@ -4,43 +4,59 @@ import java.util.ArrayList;
 
 public class Calculator {
 
-    private ArrayList<Element> elements;
+    private String input;
+    private char currentChar;
+    private int inputIndex;
+    private Calculatetable tokenTree;
 
     public Calculator(String input) {
-        elements = tokenizeInput(input);
+        this.input = input;
+        inputIndex = 0;
+        currentChar = input.charAt(inputIndex);
+
+        tokenTree = createTree(input);
     }
 
-    private ArrayList<Element> tokenizeInput(String input) {
+    private boolean update() {
+        if(currentChar >= input.length()) {
+            return false;
+        } else {
+            inputIndex++;
+            currentChar = input.charAt(inputIndex);
+            return true;
+        }
+    }
+
+    private Calculatetable createTree(String input) {
         ArrayList<Element> tokens = new ArrayList<>();
-        int i = 0;
-        while(input.length() <= i) {
-            char c = input.charAt(i);
+        while(input.length() <= inputIndex) {
             //Number
-            if('0' <= c && c <= '9' || c == '.') {
+            if('0' <= currentChar && currentChar <= '9' || currentChar == '.') {
                 int decimalLoc = -1;
                 StringBuilder token = new StringBuilder();
-                boolean point = c == '.';
+                boolean point = currentChar == '.';
                 if(point) {
                     decimalLoc = token.length();
                 }
-                token.append(c);
-                i++;
-                if(input.length() <= i) {
-                    break;
-                }
-                c = input.charAt(i);
-                while('0' <= c && c <= '9' || c == '.' && !point) {
-                    if (c == '.') {
-                        point = true;
-                        decimalLoc = token.length();
+                token.append(currentChar);
+                if(update()) {
+                    while('0' <= currentChar && currentChar <= '9' || currentChar == '.' && !point) {
+                        if(currentChar == '.') {
+                            point = true;
+                            decimalLoc = token.length();
+                        }
+                        token.append(currentChar);
+                        if(!update()) {
+                            break;
+                        }
                     }
-                    token.append(c);
-                    i++;
-                    if (input.length() <= i) {
-                        break;
+                } else {
+                    // end of input
+                    if(point) {
+                        // incomplete input
                     }
-                    c = input.charAt(i);
                 }
+
                 Literal l;
                 if(point) {
                     double d = Double.parseDouble(token.toString());
@@ -54,40 +70,74 @@ public class Calculator {
                 tokens.add(l);
             }
             //Operator
-            if(c =='+') {
-                Operator op = new Plus();
+            if(currentChar =='+') {
+                Plus op = new Plus();
                 tokens.add(op);
-                i++;
-            } else if(c == '-') {
-                Operator op = new Minus();
+                update();
+            } else if(currentChar == '-') {
+                Minus op = new Minus();
                 tokens.add(op);
-                i++;
-            } else if(c == '*') {
-                Operator op = new Multiply();
+                update();
+            } else if(currentChar == '*') {
+                Multiply op = new Multiply();
                 tokens.add(op);
-                i++;
-            } else if(c == '/') {
-                Operator op = new Division();
+                update();
+            } else if(currentChar == '/') {
+                Division op = new Division();
                 tokens.add(op);
-                i++;
+                update();
             }
             //Parenthesis
-            if(c == '(') {
-
-            } else if(c == ')') {
-
+            if(currentChar == '(') {
+                StringBuilder subtokens = new StringBuilder();
+                int depth = 0;
+                while(currentChar != ')' && depth == 0) {
+                    if(!update()) {
+                        // end of input / Error incomplete input
+                    }
+                    if(currentChar == '(') {
+                        depth++;
+                    } else if(currentChar == ')') {
+                        depth--;
+                    }
+                    subtokens.append(currentChar);
+                }
+                Calculatetable t = createTree(subtokens.toString());
+                Literal l = t.getOutput();
+                tokens.add(l);
+            } else if(currentChar == ')') {
+                //Paren is not matching / Error
             }
         }
-        return tokens;
-    }
-
-    private Expression createExprTree(ArrayList<Element> input) {
-        return null;
+        // search * & /
+        for(int i = 0; i < tokens.size(); i++) {
+            if(tokens.get(i) instanceof Multiply || tokens.get(i) instanceof Division) {
+                Expression expr = new Expression((Calculatetable)tokens.get(i-1), (Operator)tokens.get(i), (Calculatetable)tokens.get(i+1));
+                tokens.remove(i-1);
+                tokens.remove(i-1);
+                tokens.remove(i-1);
+                tokens.add(i-1, expr);
+            }
+        }
+        // search + & -
+        for(int i = 0; i < tokens.size(); i++) {
+            if(tokens.get(i) instanceof Plus || tokens.get(i) instanceof Minus) {
+                Expression expr = new Expression((Calculatetable)tokens.get(i-1), (Operator)tokens.get(i), (Calculatetable)tokens.get(i+1));
+                tokens.remove(i-1);
+                tokens.remove(i-1);
+                tokens.remove(i-1);
+                tokens.add(i-1, expr);
+            }
+        }
+        if(tokens.size() == 1) {
+            return (Calculatetable) tokens.get(0);
+        } else {
+            //Something went wrong.
+            return null;
+        }
     }
 
     public Literal getAnswer() {
-        Expression expr = createExprTree(elements);
-        Literal answer = expr.getOutput();
-        return answer;
+        return tokenTree.getOutput();
     }
 }
