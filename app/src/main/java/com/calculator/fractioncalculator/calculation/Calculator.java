@@ -4,32 +4,32 @@ import java.util.ArrayList;
 
 public class Calculator {
 
-    private String input;
+    private String inputString;
     private char currentChar;
     private int inputIndex;
-    private Calculatetable tokenTree;
 
-    public Calculator(String input) {
-        this.input = input;
+    public Calculator() {}
+
+    public Literal calculate(String input) throws WrongInputException, ParenthesisNotMatchingException, ZeroDivisionException {
+        inputString = input;
         inputIndex = 0;
         currentChar = input.charAt(inputIndex);
-
-        tokenTree = createTree(input);
+        return createTree(input).getOutput();
     }
 
     private boolean update() {
-        if(currentChar >= input.length()) {
-            return false;
-        } else {
-            inputIndex++;
-            currentChar = input.charAt(inputIndex);
+        inputIndex++;
+        if(inputIndex < inputString.length()) {
+            currentChar = inputString.charAt(inputIndex);
             return true;
+        } else {
+            return false;
         }
     }
 
-    private Calculatetable createTree(String input) {
+    private Calculatetable createTree(String input) throws WrongInputException, ParenthesisNotMatchingException, ZeroDivisionException {
         ArrayList<Element> tokens = new ArrayList<>();
-        while(input.length() <= inputIndex) {
+        while(inputIndex < input.length()) {
             //Number
             if('0' <= currentChar && currentChar <= '9' || currentChar == '.') {
                 int decimalLoc = -1;
@@ -52,16 +52,15 @@ public class Calculator {
                     }
                 } else {
                     // end of input
-                    if(point) {
-                        // incomplete input
+                    if(point) { // incomplete input
+                        throw new WrongInputException();
                     }
                 }
-
                 Literal l;
                 if(point) {
                     double d = Double.parseDouble(token.toString());
-                    int n2 = (int)Math.pow(10, token.length()-decimalLoc);
-                    int n1 = (int)d*n2;
+                    int n2 = (int)Math.pow(10, token.length()-1-decimalLoc);
+                    int n1 = (int)(d*n2);
                     l = new Literal(n1, n2, 0, 0, 0, 0);
                 } else {
                     int n = Integer.parseInt(token.toString());
@@ -89,26 +88,39 @@ public class Calculator {
             }
             //Parenthesis
             if(currentChar == '(') {
+                if(!update()) {
+                    throw new ParenthesisNotMatchingException();
+                }
                 StringBuilder subtokens = new StringBuilder();
                 int depth = 0;
-                while(currentChar != ')' && depth == 0) {
-                    if(!update()) {
-                        // end of input / Error incomplete input
+                while(!(currentChar == ')' && depth == 0)) {
+                    if(currentChar == ')') {
+                        depth--;
+                        if(depth < 0) {
+                            throw new ParenthesisNotMatchingException();
+                        }
                     }
                     if(currentChar == '(') {
                         depth++;
-                    } else if(currentChar == ')') {
-                        depth--;
                     }
                     subtokens.append(currentChar);
+                    if(!update()) { // end of input / Error incomplete input
+                        throw new ParenthesisNotMatchingException();
+                    }
                 }
-                Calculatetable t = createTree(subtokens.toString());
-                Literal l = t.getOutput();
+                update();
+                if(subtokens.length() == 0) {
+                    throw new WrongInputException("There is no element in parenthesis");
+                }
+                Calculator t = new Calculator();
+                Literal l = t.calculate(subtokens.toString());
                 tokens.add(l);
-            } else if(currentChar == ')') {
-                //Paren is not matching / Error
+            } else if(currentChar == ')') { //Paren is not matching / Error
+                throw new ParenthesisNotMatchingException();
             }
         }
+
+        //Start calculation
         // search * & /
         for(int i = 0; i < tokens.size(); i++) {
             if(tokens.get(i) instanceof Multiply || tokens.get(i) instanceof Division) {
@@ -117,6 +129,7 @@ public class Calculator {
                 tokens.remove(i-1);
                 tokens.remove(i-1);
                 tokens.add(i-1, expr);
+                i++;
             }
         }
         // search + & -
@@ -127,17 +140,13 @@ public class Calculator {
                 tokens.remove(i-1);
                 tokens.remove(i-1);
                 tokens.add(i-1, expr);
+                i++;
             }
         }
         if(tokens.size() == 1) {
             return (Calculatetable) tokens.get(0);
-        } else {
-            //Something went wrong.
-            return null;
+        } else { //Something went wrong.
+            throw new WrongInputException("Left token: "+tokens.size());
         }
-    }
-
-    public Literal getAnswer() {
-        return tokenTree.getOutput();
     }
 }

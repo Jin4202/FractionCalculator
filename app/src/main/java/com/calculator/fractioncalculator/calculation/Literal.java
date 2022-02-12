@@ -22,12 +22,18 @@ public class Literal implements Element, Calculatetable{
         int gcd1 = gcd(Math.abs(numerator), Math.abs(denominator));
         int gcd2 = gcd(Math.abs(eNumerator), Math.abs(eDenominator));
         int gcd3 = gcd(Math.abs(pNumerator), Math.abs(pDenominator));
-        numerator /= gcd1;
-        denominator /= gcd1;
-        eNumerator /= gcd2;
-        eDenominator /= gcd2;
-        pNumerator /= gcd3;
-        pDenominator /= gcd3;
+        if(gcd1 != 0) {
+            numerator /= gcd1;
+            denominator /= gcd1;
+        }
+        if(gcd2 != 0) {
+            eNumerator /= gcd2;
+            eDenominator /= gcd2;
+        }
+        if(gcd3 != 0) {
+            pNumerator /= gcd3;
+            pDenominator /= gcd3;
+        }
     }
 
     private int gcd(int i, int j) {
@@ -72,5 +78,9 @@ public class Literal implements Element, Calculatetable{
     @Override
     public Literal getOutput() {
         return this;
+    }
+
+    public String getStringOutput() {
+        return String.format("(%d / %d) + (%d / %d)e + (%d / %d)pi",numerator, denominator, eDenominator, eNumerator, pDenominator, pNumerator);
     }
 }

@@ -11,7 +11,7 @@ public class Expression implements Element, Calculatetable {
         this.expr2 = n2;
     }
 
-    public Literal getOutput() {
+    public Literal getOutput() throws ZeroDivisionException {
         return op.calculate(expr1.getOutput(), expr2.getOutput());
     }
 }
