@@ -1,5 +1,9 @@
 package com.calculator.fractioncalculator.calculation;
 
+import android.os.Build;
+
+import androidx.annotation.RequiresApi;
+
 import java.util.ArrayList;
 
 public class Calculator {
@@ -10,6 +14,7 @@ public class Calculator {
 
     public Calculator() {}
 
+    @RequiresApi(api = Build.VERSION_CODES.N)
     public Literal calculate(String input) throws WrongInputException, ParenthesisNotMatchingException, ZeroDivisionException {
         inputString = input;
         inputIndex = 0;
@@ -27,6 +32,7 @@ public class Calculator {
         }
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.N)
     private Calculatetable createTree(String input) throws WrongInputException, ParenthesisNotMatchingException, ZeroDivisionException {
         ArrayList<Element> tokens = new ArrayList<>();
         while(inputIndex < input.length()) {
@@ -58,13 +64,15 @@ public class Calculator {
                 }
                 Literal l;
                 if(point) {
+                    //Fraction
                     double d = Double.parseDouble(token.toString());
                     int n2 = (int)Math.pow(10, token.length()-1-decimalLoc);
                     int n1 = (int)(d*n2);
-                    l = new Literal(n1, n2, 0, 0, 0, 0);
+                    l = new Literal(new Lit(n1), new Lit(n2));
                 } else {
+                    //Integer
                     int n = Integer.parseInt(token.toString());
-                    l = new Literal(n, 1, 0, 0, 0, 0);
+                    l = new Literal(new Lit(n), new Lit(1));
                 }
                 tokens.add(l);
             }
