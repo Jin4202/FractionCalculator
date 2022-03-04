@@ -75,24 +75,48 @@ public class Calculator {
                     l = new Literal(new Lit(n), new Lit(1));
                 }
                 tokens.add(l);
+                //End of number parsing
+                continue;
             }
             //Operator
             if(currentChar =='+') {
                 Plus op = new Plus();
                 tokens.add(op);
                 update();
+                //End of operator parsing
+                continue;
             } else if(currentChar == '-') {
                 Minus op = new Minus();
                 tokens.add(op);
                 update();
+                //End of operator parsing
+                continue;
             } else if(currentChar == '*') {
                 Multiply op = new Multiply();
                 tokens.add(op);
                 update();
+                //End of operator parsing
+                continue;
             } else if(currentChar == '/') {
                 Division op = new Division();
                 tokens.add(op);
                 update();
+                //End of operator parsing
+                continue;
+            }
+            // Constants
+            if(currentChar == 'p') {
+                Literal l = new Literal(new Lit('p', 1), new Lit(1));
+                tokens.add(l);
+                update();
+                //End of constant parsing
+                continue;
+            } else if (currentChar == 'e') {
+                Literal l = new Literal(new Lit('e', 1), new Lit(1));
+                tokens.add(l);
+                update();
+                //End of constant parsing
+                continue;
             }
             //Parenthesis
             if(currentChar == '(') {
@@ -137,7 +161,7 @@ public class Calculator {
                 tokens.remove(i-1);
                 tokens.remove(i-1);
                 tokens.add(i-1, expr);
-                i++;
+                i--;
             }
         }
         // search + & -
@@ -148,7 +172,7 @@ public class Calculator {
                 tokens.remove(i-1);
                 tokens.remove(i-1);
                 tokens.add(i-1, expr);
-                i++;
+                i--;
             }
         }
         if(tokens.size() == 1) {

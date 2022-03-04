@@ -32,7 +32,7 @@ public class Literal implements Element, Calculatetable {
         }
         for(int denomPiKey : denominator.getCoefficients().keySet()) {
             for (int denomEKey : denominator.getCoefficients().get(denomPiKey).keySet()) {
-                int coef = numerator.getCoefficients().get(denomPiKey).get(denomEKey);
+                int coef = denominator.getCoefficients().get(denomPiKey).get(denomEKey);
                 denomCommon = (denomCommon > 0) ? gcd(denomCommon, coef) : coef;
             }
         }
@@ -49,10 +49,60 @@ public class Literal implements Element, Calculatetable {
                 }
             }
         }
-
         //PI
-
+        int numMinPiPow = (int) numerator.getCoefficients().keySet().toArray()[0];
+        int denomMinPiPow = (int) denominator.getCoefficients().keySet().toArray()[0];
+        int minPiPow = Math.min(numMinPiPow, denomMinPiPow);
+        if(minPiPow > 0) {
+            HashMap<Integer, HashMap<Integer, Integer>> factoredNum = new HashMap<>();
+            for(int piKey : numerator.getCoefficients().keySet()) {
+                for(int eKey : numerator.getCoefficients().get(piKey).keySet()) {
+                    factoredNum.put(piKey-minPiPow, new HashMap<>());
+                    factoredNum.get(piKey-minPiPow).put(eKey, numerator.getCoefficients().get(piKey).get(eKey));
+                }
+            }
+            numerator.setCoefficients(factoredNum);
+            HashMap<Integer, HashMap<Integer, Integer>> factoredDenom = new HashMap<>();
+            for(int piKey : denominator.getCoefficients().keySet()) {
+                for(int eKey : denominator.getCoefficients().get(piKey).keySet()) {
+                    factoredDenom.put(piKey-minPiPow, new HashMap<>());
+                    factoredDenom.get(piKey-minPiPow).put(eKey, denominator.getCoefficients().get(piKey).get(eKey));
+                }
+            }
+            denominator.setCoefficients(factoredDenom);
+        }
         //E
+        int numMinEPow = Integer.MAX_VALUE;
+        for(int piKey : numerator.getCoefficients().keySet()) {
+            for(int eKey : numerator.getCoefficients().get(piKey).keySet()) {
+                numMinEPow = Math.min(numMinEPow, eKey);
+            }
+        }
+        int denomMinEPow = Integer.MAX_VALUE;;
+        for(int piKey : denominator.getCoefficients().keySet()) {
+            for(int eKey : denominator.getCoefficients().get(piKey).keySet()) {
+                denomMinEPow = Math.min(denomMinEPow, eKey);
+            }
+        }
+        int minEPow = Math.min(numMinEPow, denomMinEPow);
+        if(minEPow > 0) {
+            HashMap<Integer, HashMap<Integer, Integer>> factoredNum = new HashMap<>();
+            for(int piKey : numerator.getCoefficients().keySet()) {
+                for(int eKey : numerator.getCoefficients().get(piKey).keySet()) {
+                    factoredNum.put(piKey, new HashMap<>());
+                    factoredNum.get(piKey).put(eKey-minEPow, numerator.getCoefficients().get(piKey).get(eKey));
+                }
+            }
+            numerator.setCoefficients(factoredNum);
+            HashMap<Integer, HashMap<Integer, Integer>> factoredDenom = new HashMap<>();
+            for(int piKey : denominator.getCoefficients().keySet()) {
+                for(int eKey : denominator.getCoefficients().get(piKey).keySet()) {
+                    factoredDenom.putIfAbsent(piKey, new HashMap<>());
+                    factoredDenom.get(piKey).put(eKey-minEPow, denominator.getCoefficients().get(piKey).get(eKey));
+                }
+            }
+            denominator.setCoefficients(factoredDenom);
+        }
     }
 
     private int gcd(int i, int j) {
@@ -84,6 +134,6 @@ public class Literal implements Element, Calculatetable {
     }
 
     public String getStringOutput() {
-        return "";
+        return numerator.getStringOutput() + " / " + denominator.getStringOutput();
     }
 }
