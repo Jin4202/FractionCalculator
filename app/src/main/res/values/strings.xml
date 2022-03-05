@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">FractionCalculator</string>
+    <string name="app_name">Fraction Calculator</string>
     <string name="input_equation">Input Equation</string>
     <string name="answer_text">Answer Text</string>
     <string name="_7">7</string>

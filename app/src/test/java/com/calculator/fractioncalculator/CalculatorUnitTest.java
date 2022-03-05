@@ -1,6 +1,6 @@
 package com.calculator.fractioncalculator;
 import com.calculator.fractioncalculator.calculation.Calculator;
-import com.calculator.fractioncalculator.calculation.ParenthesisNotMatchingException;
+import com.calculator.fractioncalculator.calculation.ParenthesesNotMatchingException;
 import com.calculator.fractioncalculator.calculation.WrongInputException;
 import com.calculator.fractioncalculator.calculation.ZeroDivisionException;
 
@@ -19,7 +19,7 @@ public class CalculatorUnitTest {
     public void testCalculator() {
         try {
             Assert.assertEquals("3(0,0) / 1(0,0)", calculator.calculate("3").getStringOutput());
-        } catch (WrongInputException | ParenthesisNotMatchingException | ZeroDivisionException e) {
+        } catch (WrongInputException | ParenthesesNotMatchingException | ZeroDivisionException e) {
             e.printStackTrace();
         }
     }
@@ -44,7 +44,9 @@ public class CalculatorUnitTest {
             Assert.assertEquals("-5(0,0) / 1(0,0)", calculator.calculate("0-5").getStringOutput());
             Assert.assertEquals("0(0,0) / 1(0,0)", calculator.calculate("5*0").getStringOutput());
             Assert.assertEquals("0(0,0) / 5(0,0)", calculator.calculate("0/5").getStringOutput());
-        } catch (WrongInputException | ParenthesisNotMatchingException | ZeroDivisionException e) {
+            //Negative values
+            Assert.assertEquals("-5(0,0) / 1(0,0)", calculator.calculate("(-5)").getStringOutput());
+        } catch (WrongInputException | ParenthesesNotMatchingException | ZeroDivisionException e) {
             e.printStackTrace();
         }
     }
@@ -53,17 +55,19 @@ public class CalculatorUnitTest {
     public void testExceptionHandling() {
         try {
             calculator.calculate("5/0").getStringOutput();
+            Assert.fail();
         } catch (ZeroDivisionException e) {
             Assert.assertTrue(true);
-        } catch (WrongInputException | ParenthesisNotMatchingException e) {
+        } catch (WrongInputException | ParenthesesNotMatchingException e) {
             e.printStackTrace();
         }
 
         try {
             calculator.calculate("3.0/(3*0)").getStringOutput();
+            Assert.fail();
         } catch (ZeroDivisionException e) {
             Assert.assertTrue(true);
-        } catch (WrongInputException | ParenthesisNotMatchingException e) {
+        } catch (WrongInputException | ParenthesesNotMatchingException e) {
             e.printStackTrace();
         }
     }
@@ -76,7 +80,7 @@ public class CalculatorUnitTest {
             Assert.assertEquals("9(0,0) / 1(0,0)", calculator.calculate("2*(1.2+3.3)").getStringOutput());
             Assert.assertEquals("29(0,0) / 2(0,0)", calculator.calculate("((2*5)+(1.2+3.3))").getStringOutput());
             Assert.assertEquals("6(0,0) / 1(0,0)", calculator.calculate("(1+2+3)").getStringOutput());
-        } catch (WrongInputException | ParenthesisNotMatchingException | ZeroDivisionException e) {
+        } catch (WrongInputException | ParenthesesNotMatchingException | ZeroDivisionException e) {
             e.printStackTrace();
         }
 
@@ -84,13 +88,13 @@ public class CalculatorUnitTest {
             calculator.calculate("()").getStringOutput();
         } catch(WrongInputException e) {
             Assert.assertTrue(true);
-        } catch (ParenthesisNotMatchingException | ZeroDivisionException e) {
+        } catch (ParenthesesNotMatchingException | ZeroDivisionException e) {
             e.printStackTrace();
         }
 
         try {
             calculator.calculate("(1+1))").getStringOutput();
-        } catch(ParenthesisNotMatchingException e) {
+        } catch(ParenthesesNotMatchingException e) {
             Assert.assertTrue(true);
         } catch (WrongInputException | ZeroDivisionException e) {
             e.printStackTrace();
@@ -111,7 +115,7 @@ public class CalculatorUnitTest {
             Assert.assertEquals("3(0,0) / 1(0,0)", calculator.calculate("(3*p)/p").getStringOutput());
             Assert.assertEquals("2(1,0) / 1(0,0)", calculator.calculate("(4*p*p)/(2*p)").getStringOutput());
 
-        } catch (WrongInputException | ParenthesisNotMatchingException | ZeroDivisionException e) {
+        } catch (WrongInputException | ParenthesesNotMatchingException | ZeroDivisionException e) {
             e.printStackTrace();
         }
     }
@@ -130,7 +134,7 @@ public class CalculatorUnitTest {
             Assert.assertEquals("3(0,0) / 1(0,0)", calculator.calculate("(3*e)/e").getStringOutput());
             Assert.assertEquals("2(0,1) / 1(0,0)", calculator.calculate("(4*e*e)/(2*e)").getStringOutput());
 
-        } catch (WrongInputException | ParenthesisNotMatchingException | ZeroDivisionException e) {
+        } catch (WrongInputException | ParenthesesNotMatchingException | ZeroDivisionException e) {
             e.printStackTrace();
         }
     }

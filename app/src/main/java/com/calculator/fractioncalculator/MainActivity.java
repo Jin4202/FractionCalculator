@@ -5,9 +5,10 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.calculator.fractioncalculator.calculation.Calculator;
-import com.calculator.fractioncalculator.calculation.ParenthesisNotMatchingException;
+import com.calculator.fractioncalculator.calculation.ParenthesesNotMatchingException;
 import com.calculator.fractioncalculator.calculation.WrongInputException;
 import com.calculator.fractioncalculator.calculation.ZeroDivisionException;
 
@@ -32,7 +33,6 @@ public class MainActivity extends AppCompatActivity {
 
         input = new InputChecker();
         inputIndex = 0;
-
 
         //Inputs
         findViewById(R.id.button_num0).setOnClickListener(view -> {
@@ -103,10 +103,23 @@ public class MainActivity extends AppCompatActivity {
             inputIndex += input.insertParenthesis(inputIndex);
             refresh();
         });
+        findViewById(R.id.button_PI).setOnClickListener(view -> {
+            inputIndex += input.insertConstant('p', inputIndex);
+            refresh();
+        });
+        findViewById(R.id.button_E).setOnClickListener(view -> {
+            inputIndex += input.insertConstant('e', inputIndex);
+            refresh();
+        });
+        findViewById(R.id.button_sign).setOnClickListener(view -> {
+            inputIndex += input.insertSign(inputIndex);
+            refresh();
+        });
+
 
         //Functions
         findViewById(R.id.button_allclear).setOnClickListener(view -> {
-            input.allclear();
+            input = new InputChecker();
             inputIndex = 0;
             refresh();
         });
@@ -116,20 +129,22 @@ public class MainActivity extends AppCompatActivity {
         });
         findViewById(R.id.button_equal).setOnClickListener(view -> {
             try {
-                String[] answerText = getFormattedAnswer(calculator.calculate(input.toString()).getStringOutput());
-                textView_answer.setText(String.format("%s\n%s\n%s", answerText[0],"---------------" , answerText[1]));
+                textView_answer.setText(calculator.calculate(input.toString()).getStringOutput());
             } catch (WrongInputException e) {
                 //Invalid format
-            } catch (ParenthesisNotMatchingException e) {
-                //Parenthesis is not matching
+                Toast.makeText(this, "Invalid format.", Toast.LENGTH_SHORT).show();
+            } catch (ParenthesesNotMatchingException e) {
+                //Parentheses are not matching
+                Toast.makeText(this, "Parentheses are not matching.", Toast.LENGTH_SHORT).show();
             } catch (ZeroDivisionException e) {
                 //Zero division
+                Toast.makeText(this, "Can not divide by zero.", Toast.LENGTH_SHORT).show();
             }
         });
         findViewById(R.id.button_answer).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                //
+
             }
         });
         findViewById(R.id.button_formatter).setOnClickListener(new View.OnClickListener() {
@@ -139,9 +154,9 @@ public class MainActivity extends AppCompatActivity {
             }
         });
     }
-
+    //π
     private void refresh() {
-        textView_input.setText(input.getInputString());
+        textView_input.setText(input.toString());
     }
     private String[] getFormattedAnswer(String ans) {
         return new String[] {ans.substring(0, ans.indexOf('/')), ans.substring(ans.indexOf('/')+1)};

@@ -10,8 +10,10 @@ public class Division extends Operator {
     public Literal calculate(Literal n1, Literal n2) throws ZeroDivisionException {
         boolean isZero = true;
         for(int piKey : n2.getNumerator().getCoefficients().keySet()) {
-            if(n2.getNumerator().getCoefficients().get(piKey).size() > 0) {
-                isZero = false;
+            for(int eKey : n2.getNumerator().getCoefficients().get(piKey).keySet()) {
+                if(n2.getNumerator().getCoefficients().get(piKey).get(eKey) != 0) {
+                    isZero = false;
+                }
             }
         }
         if(isZero) {

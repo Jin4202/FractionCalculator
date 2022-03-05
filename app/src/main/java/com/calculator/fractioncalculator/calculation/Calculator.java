@@ -1,9 +1,5 @@
 package com.calculator.fractioncalculator.calculation;
 
-import android.os.Build;
-
-import androidx.annotation.RequiresApi;
-
 import java.util.ArrayList;
 
 public class Calculator {
@@ -22,7 +18,7 @@ public class Calculator {
         return prevAns;
     }
 
-    public Literal calculate(String input) throws WrongInputException, ParenthesisNotMatchingException, ZeroDivisionException {
+    public Literal calculate(String input) throws WrongInputException, ParenthesesNotMatchingException, ZeroDivisionException {
         inputString = input;
         inputIndex = 0;
         currentChar = input.charAt(inputIndex);
@@ -40,8 +36,14 @@ public class Calculator {
         }
     }
 
-    private Calculatetable createTree(String input) throws WrongInputException, ParenthesisNotMatchingException, ZeroDivisionException {
+    private Calculatetable createTree(String input) throws WrongInputException, ParenthesesNotMatchingException, ZeroDivisionException {
         ArrayList<Element> tokens = new ArrayList<>();
+        //negative number always formatted as (-n)
+        boolean neg = false;
+        if(inputIndex < input.length() && currentChar == '-') {
+            update();
+            neg = true;
+        }
         while(inputIndex < input.length()) {
             //Number
             if('0' <= currentChar && currentChar <= '9' || currentChar == '.') {
@@ -75,10 +77,18 @@ public class Calculator {
                     double d = Double.parseDouble(token.toString());
                     int n2 = (int)Math.pow(10, token.length()-1-decimalLoc);
                     int n1 = (int)(d*n2);
+                    if(neg) {
+                        n1 *= -1;
+                        neg = false;
+                    }
                     l = new Literal(new Lit(n1), new Lit(n2));
                 } else {
                     //Integer
                     int n = Integer.parseInt(token.toString());
+                    if(neg) {
+                        n *= -1;
+                        neg = false;
+                    }
                     l = new Literal(new Lit(n), new Lit(1));
                 }
                 tokens.add(l);
@@ -128,7 +138,7 @@ public class Calculator {
             //Parenthesis
             if(currentChar == '(') {
                 if(!update()) {
-                    throw new ParenthesisNotMatchingException();
+                    throw new ParenthesesNotMatchingException();
                 }
                 StringBuilder subtokens = new StringBuilder();
                 int depth = 0;
@@ -136,7 +146,7 @@ public class Calculator {
                     if(currentChar == ')') {
                         depth--;
                         if(depth < 0) {
-                            throw new ParenthesisNotMatchingException();
+                            throw new ParenthesesNotMatchingException();
                         }
                     }
                     if(currentChar == '(') {
@@ -144,7 +154,7 @@ public class Calculator {
                     }
                     subtokens.append(currentChar);
                     if(!update()) { // end of input / Error incomplete input
-                        throw new ParenthesisNotMatchingException();
+                        throw new ParenthesesNotMatchingException();
                     }
                 }
                 update();
@@ -154,9 +164,12 @@ public class Calculator {
                 Calculator t = new Calculator();
                 Literal l = t.calculate(subtokens.toString());
                 tokens.add(l);
+                continue;
             } else if(currentChar == ')') { //Paren is not matching / Error
-                throw new ParenthesisNotMatchingException();
+                throw new ParenthesesNotMatchingException();
             }
+            //if nothing detects, skip.
+            update();
         }
 
         //Start calculation
