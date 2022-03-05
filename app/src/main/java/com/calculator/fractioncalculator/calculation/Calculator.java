@@ -12,14 +12,22 @@ public class Calculator {
     private char currentChar;
     private int inputIndex;
 
-    public Calculator() {}
+    private Literal prevAns;
 
-    @RequiresApi(api = Build.VERSION_CODES.N)
+    public Calculator() {
+        prevAns = null;
+    }
+
+    public Literal getPrevAns() {
+        return prevAns;
+    }
+
     public Literal calculate(String input) throws WrongInputException, ParenthesisNotMatchingException, ZeroDivisionException {
         inputString = input;
         inputIndex = 0;
         currentChar = input.charAt(inputIndex);
-        return createTree(input).getOutput();
+        prevAns = createTree(input).getOutput();
+        return prevAns;
     }
 
     private boolean update() {
@@ -32,7 +40,6 @@ public class Calculator {
         }
     }
 
-    @RequiresApi(api = Build.VERSION_CODES.N)
     private Calculatetable createTree(String input) throws WrongInputException, ParenthesisNotMatchingException, ZeroDivisionException {
         ArrayList<Element> tokens = new ArrayList<>();
         while(inputIndex < input.length()) {

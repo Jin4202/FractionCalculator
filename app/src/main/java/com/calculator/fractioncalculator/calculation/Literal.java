@@ -12,14 +12,12 @@ public class Literal implements Element, Calculatetable {
     private Lit numerator;
     private Lit denominator;
 
-    @RequiresApi(api = Build.VERSION_CODES.N)
     public Literal(Lit num, Lit denom) {
         numerator = num;
         denominator = denom;
         reduce();
     }
 
-    @RequiresApi(api = Build.VERSION_CODES.N)
     private void reduce() {
         //Check coefficient
         int numCommon = 0;
@@ -97,7 +95,9 @@ public class Literal implements Element, Calculatetable {
             HashMap<Integer, HashMap<Integer, Integer>> factoredDenom = new HashMap<>();
             for(int piKey : denominator.getCoefficients().keySet()) {
                 for(int eKey : denominator.getCoefficients().get(piKey).keySet()) {
-                    factoredDenom.putIfAbsent(piKey, new HashMap<>());
+                    if(factoredDenom.get(piKey) == null) {
+                        factoredDenom.put(piKey, new HashMap<>());
+                    }
                     factoredDenom.get(piKey).put(eKey-minEPow, denominator.getCoefficients().get(piKey).get(eKey));
                 }
             }

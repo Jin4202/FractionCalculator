@@ -1,3 +1,30 @@
 <resources>
     <string name="app_name">FractionCalculator</string>
+    <string name="input_equation">Input Equation</string>
+    <string name="answer_text">Answer Text</string>
+    <string name="_7">7</string>
+    <string name="_8">8</string>
+    <string name="_9">9</string>
+    <string name="_4">4</string>
+    <string name="_5">5</string>
+    <string name="_6">6</string>
+    <string name="_1">1</string>
+    <string name="_2">2</string>
+    <string name="_3">3</string>
+    <string name="sign">(+/-)</string>
+    <string name="_0">0</string>
+    <string name="point">.</string>
+    <string name="plus">+</string>
+    <string name="minus">-</string>
+    <string name="multiply">x</string>
+    <string name="division">/</string>
+    <string name="allclear">AC</string>
+    <string name="clear">CE</string>
+    <string name="answer">Ans</string>
+    <string name="equal">=</string>
+    <string name="paren_opening">(</string>
+    <string name="paren_closing">)</string>
+    <string name="pi">PI</string>
+    <string name="euler">e</string>
+    <string name="formatter">A/B</string>
 </resources>
