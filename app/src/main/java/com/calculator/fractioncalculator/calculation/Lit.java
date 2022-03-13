@@ -1,10 +1,5 @@
 package com.calculator.fractioncalculator.calculation;
 
-import android.os.Build;
-import android.util.Log;
-
-import androidx.annotation.RequiresApi;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 

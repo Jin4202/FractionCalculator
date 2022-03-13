@@ -14,11 +14,6 @@ public class Expression implements Element, Calculatetable {
     }
 
     public Literal getOutput() throws ZeroDivisionException {
-        /*
-        String a1 = expr1.getOutput().getStringOutput();
-        String a2 = expr2.getOutput().getStringOutput();
-        String ans = op.calculate(expr1.getOutput(), expr2.getOutput()).getStringOutput();
-        */
         return op.calculate(expr1.getOutput(), expr2.getOutput());
     }
 }
