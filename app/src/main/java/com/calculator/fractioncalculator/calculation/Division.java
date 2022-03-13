@@ -5,7 +5,6 @@ import android.os.Build;
 import androidx.annotation.RequiresApi;
 
 public class Division extends Operator {
-    @RequiresApi(api = Build.VERSION_CODES.N)
     @Override
     public Literal calculate(Literal n1, Literal n2) throws ZeroDivisionException {
         boolean isZero = true;

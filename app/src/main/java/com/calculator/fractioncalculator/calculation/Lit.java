@@ -1,6 +1,7 @@
 package com.calculator.fractioncalculator.calculation;
 
 import android.os.Build;
+import android.util.Log;
 
 import androidx.annotation.RequiresApi;
 
@@ -35,17 +36,48 @@ public class Lit {
         coefficients = n;
     }
 
-    @RequiresApi(api = Build.VERSION_CODES.N)
+    public Lit add(Lit n2) {
+        Lit output = new Lit();
+        for(int piKey : this.getCoefficients().keySet()) {
+            for (int eKey : this.getCoefficients().get(piKey).keySet()) {
+                int c = this.getCoefficients().get(piKey).get(eKey);
+                if(output.getCoefficients().get(piKey) == null || output.getCoefficients().get(piKey).size() == 0) {
+                    output.getCoefficients().put(piKey, new HashMap<>());
+                }
+                output.getCoefficients().get(piKey).put(eKey, c);
+            }
+        }
+        for(int piKey : n2.getCoefficients().keySet()) {
+            for (int eKey : n2.getCoefficients().get(piKey).keySet()) {
+                int c = n2.getCoefficients().get(piKey).get(eKey);
+                if(output.getCoefficients().get(piKey) == null || output.getCoefficients().get(piKey).size() == 0) {
+                    output.getCoefficients().put(piKey, new HashMap<>());
+                    output.getCoefficients().get(piKey).put(eKey, 0);
+                } else if(output.getCoefficients().get(piKey).get(eKey) == null) {
+                    output.getCoefficients().get(piKey).put(eKey, 0);
+                }
+                HashMap<Integer, Integer> a = output.getCoefficients().get(piKey);
+                int n1 = output.getCoefficients().get(piKey).get(eKey);
+                output.getCoefficients().get(piKey).put(eKey, n1+c);
+            }
+        }
+        return output;
+    }
+
     public Lit times(Lit n2) {
+        String a1 = this.getStringOutput();
+        String a2 = n2.getStringOutput();
         ArrayList<Lit> lits = new ArrayList<>();
         for(int n2PiKey : n2.getCoefficients().keySet()) {
-            for (int n2EKey : n2.getCoefficients().getOrDefault(n2PiKey, new HashMap<>()).keySet()) {
+            for (int n2EKey : n2.getCoefficients().get(n2PiKey).keySet()) {
+                int c2 = n2.getCoefficients().get(n2PiKey).get(n2EKey);
                 HashMap<Integer, HashMap<Integer, Integer>> m = new HashMap<>();
                 for(int n1PiKey : this.getCoefficients().keySet()) {
                     for(int n1EKey : this.getCoefficients().get(n1PiKey).keySet()) {
                         int c1 = this.getCoefficients().get(n1PiKey).get(n1EKey);
-                        int c2 = n2.getCoefficients().get(n2PiKey).get(n2EKey);
-                        m.put(n1PiKey+n2PiKey, new HashMap<>());
+                        if(m.get(n1PiKey+n2PiKey) == null || m.get(n1PiKey+n2PiKey).size() == 0) {
+                            m.put(n1PiKey+n2PiKey, new HashMap<>());
+                        }
                         m.get(n1PiKey+n2PiKey).put(n1EKey+n2EKey, c1*c2);
                     }
                 }
@@ -59,27 +91,7 @@ public class Lit {
         return output;
     }
 
-    @RequiresApi(api = Build.VERSION_CODES.N)
-    public Lit add(Lit n2) {
-        Lit output = new Lit();
-        for(int piKey : this.getCoefficients().keySet()) {
-            for (int eKey : this.getCoefficients().get(piKey).keySet()) {
-                int c = this.getCoefficients().get(piKey).get(eKey);
-                output.getCoefficients().put(piKey, new HashMap<>());
-                output.getCoefficients().get(piKey).put(eKey, c);
-            }
-        }
-        for(int piKey : n2.getCoefficients().keySet()) {
-            for (int eKey : n2.getCoefficients().get(piKey).keySet()) {
-                int c = n2.getCoefficients().get(piKey).get(eKey);
-                output.getCoefficients().putIfAbsent(piKey, new HashMap<>());
-                output.getCoefficients().get(piKey).put(eKey, output.getCoefficients().get(piKey).getOrDefault(eKey, 0)+c);
-            }
-        }
-        return output;
-    }
-
-    public void setCoefficients(java.util.HashMap<Integer, java.util.HashMap<Integer, Integer>> coefficients) {
+    public void setCoefficients(HashMap<Integer, HashMap<Integer, Integer>> coefficients) {
         this.coefficients = coefficients;
     }
 

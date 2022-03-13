@@ -8,7 +8,6 @@ import androidx.annotation.RequiresApi;
 import java.util.HashMap;
 
 public class Minus extends Operator {
-    @RequiresApi(api = Build.VERSION_CODES.N)
     @Override
     public Literal calculate(Literal n1, Literal n2) {
         n2 = new Literal(n2.getNumerator().times(new Lit(-1)), n2.getDenominator());

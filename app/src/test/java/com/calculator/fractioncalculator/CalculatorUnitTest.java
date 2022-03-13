@@ -131,9 +131,20 @@ public class CalculatorUnitTest {
             Assert.assertEquals("4(0,0)-1(0,1) / 1(0,0)", calculator.calculate("4-e").getStringOutput());
             Assert.assertEquals("2(0,1) / 1(0,0)", calculator.calculate("e+e").getStringOutput());
             Assert.assertEquals("0(0,1) / 1(0,0)", calculator.calculate("e-e").getStringOutput());
+            Assert.assertEquals("10(0,0)+2(0,1) / 1(0,0)", calculator.calculate("(5+e)*2").getStringOutput());
             Assert.assertEquals("3(0,0) / 1(0,0)", calculator.calculate("(3*e)/e").getStringOutput());
             Assert.assertEquals("2(0,1) / 1(0,0)", calculator.calculate("(4*e*e)/(2*e)").getStringOutput());
 
+        } catch (WrongInputException | ParenthesesNotMatchingException | ZeroDivisionException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Test
+    public void testCombinations() {
+        try {
+            Assert.assertEquals("3(0,0)+3(0,1)+3(1,0) / 1(0,0)", calculator.calculate("(1+p+e)*3").getStringOutput());
+            Assert.assertEquals("6(0,0)+1(0,1)+1(1,0) / 1(0,0)", calculator.calculate("(1+p+e)+2+3").getStringOutput());
         } catch (WrongInputException | ParenthesesNotMatchingException | ZeroDivisionException e) {
             e.printStackTrace();
         }

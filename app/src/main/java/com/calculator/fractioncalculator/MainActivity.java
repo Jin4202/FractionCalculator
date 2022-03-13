@@ -129,7 +129,9 @@ public class MainActivity extends AppCompatActivity {
         });
         findViewById(R.id.button_equal).setOnClickListener(view -> {
             try {
-                textView_answer.setText(calculator.calculate(input.toString()).getStringOutput());
+                if(input.toString().length() > 0) {
+                    textView_answer.setText(calculator.calculate(input.toString()).getStringOutput());
+                }
             } catch (WrongInputException e) {
                 //Invalid format
                 Toast.makeText(this, "Invalid format.", Toast.LENGTH_SHORT).show();
