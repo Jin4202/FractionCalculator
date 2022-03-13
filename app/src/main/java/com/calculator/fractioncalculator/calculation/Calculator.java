@@ -14,10 +14,6 @@ public class Calculator {
         prevAns = null;
     }
 
-    public Literal getPrevAns() {
-        return prevAns;
-    }
-
     public Literal calculate(String input) throws WrongInputException, ParenthesesNotMatchingException, ZeroDivisionException {
         inputString = input;
         inputIndex = 0;
@@ -134,6 +130,11 @@ public class Calculator {
                 update();
                 //End of constant parsing
                 continue;
+            }
+            //Previous Answer
+            if(currentChar == 'A') {
+                tokens.add(prevAns);
+                update();
             }
             //Parenthesis
             if(currentChar == '(') {

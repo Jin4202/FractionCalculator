@@ -3,11 +3,18 @@ package com.calculator.fractioncalculator;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.os.Bundle;
+import android.text.SpannableStringBuilder;
+import android.text.Spanned;
+import android.text.style.RelativeSizeSpan;
+import android.text.style.SuperscriptSpan;
+import android.util.Log;
 import android.view.View;
+import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.calculator.fractioncalculator.calculation.Calculator;
+import com.calculator.fractioncalculator.calculation.Literal;
 import com.calculator.fractioncalculator.calculation.ParenthesesNotMatchingException;
 import com.calculator.fractioncalculator.calculation.WrongInputException;
 import com.calculator.fractioncalculator.calculation.ZeroDivisionException;
@@ -15,10 +22,14 @@ import com.calculator.fractioncalculator.calculation.ZeroDivisionException;
 public class MainActivity extends AppCompatActivity {
 
     private TextView textView_input;
-    private TextView textView_answer;
+    private TextView textView_answerNumerator;
+    private View view_answerLineBreaker;
+    private TextView textView_answerDenominator;
 
     private InputChecker input;
     private int inputIndex;
+
+    private boolean answerFormatFraction;
 
 
     @Override
@@ -29,10 +40,20 @@ public class MainActivity extends AppCompatActivity {
         Calculator calculator = new Calculator();
 
         textView_input = findViewById(R.id.text_equation);
-        textView_answer = findViewById(R.id.text_answer);
+        textView_input.setText("");
+
+        textView_answerNumerator = findViewById(R.id.text_answerNumerator);
+        view_answerLineBreaker = findViewById(R.id.lineBreaker);
+        textView_answerDenominator = findViewById(R.id.text_answerDenominator);
+        textView_answerNumerator.setText("");
+        view_answerLineBreaker.setVisibility(View.INVISIBLE);
+        textView_answerDenominator.setText("");
+        textView_answerDenominator.setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
 
         input = new InputChecker();
         inputIndex = 0;
+
+        answerFormatFraction = false;
 
         //Inputs
         findViewById(R.id.button_num0).setOnClickListener(view -> {
@@ -115,6 +136,10 @@ public class MainActivity extends AppCompatActivity {
             inputIndex += input.insertSign(inputIndex);
             refresh();
         });
+        findViewById(R.id.button_answer).setOnClickListener(view -> {
+            inputIndex += input.insertConstant('A', inputIndex);
+            refresh();
+        });
 
 
         //Functions
@@ -127,10 +152,22 @@ public class MainActivity extends AppCompatActivity {
             inputIndex += input.clear(inputIndex);
             refresh();
         });
-        findViewById(R.id.button_equal).setOnClickListener(view -> {
+        Button button_equal = findViewById(R.id.button_equal);
+        button_equal.setOnClickListener(view -> {
             try {
                 if(input.toString().length() > 0) {
-                    textView_answer.setText(calculator.calculate(input.toString()).getStringOutput());
+                    Literal answer = calculator.calculate(input.toString());
+                    String numerator = answer.getNumerator().getStringOutput();
+                    String denominator = answer.getDenominator().getStringOutput();
+                    if(answerFormatFraction) {
+                        textView_answerNumerator.setText(formatAnswer(numerator));
+                        view_answerLineBreaker.setVisibility(View.VISIBLE);
+                        textView_answerDenominator.setText(formatAnswer(denominator));
+                    } else {
+                        textView_answerNumerator.setText(String.format("%s", getRealValue(numerator) / getRealValue(denominator)));
+                        view_answerLineBreaker.setVisibility(View.INVISIBLE);
+                        textView_answerDenominator.setText("");
+                    }
                 }
             } catch (WrongInputException e) {
                 //Invalid format
@@ -143,24 +180,77 @@ public class MainActivity extends AppCompatActivity {
                 Toast.makeText(this, "Can not divide by zero.", Toast.LENGTH_SHORT).show();
             }
         });
-        findViewById(R.id.button_answer).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-
-            }
-        });
-        findViewById(R.id.button_formatter).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-
-            }
+        findViewById(R.id.button_formatter).setOnClickListener(view -> {
+            answerFormatFraction = !answerFormatFraction;
+            button_equal.performClick();
         });
     }
-    //π
+
+    //translate into user friendly format
+    private SpannableStringBuilder formatAnswer(String answer) {
+        SpannableStringBuilder outputAnswer = new SpannableStringBuilder();
+        StringBuilder answerText = new StringBuilder(answer);
+        while(answerText.indexOf("(") != -1) {
+            StringBuilder degree = new StringBuilder();
+            boolean isNegative = false;
+            // var = "c(p,e)"
+            if(answerText.indexOf("(")-2 >= 0 && answerText.charAt(answerText.indexOf("(")-2) == '-') {
+                isNegative = true;
+            }
+            String var = answerText.substring(answerText.indexOf("(")-1, answerText.indexOf(")")+1);
+            answerText.delete(answerText.indexOf("(")-1, answerText.indexOf(")")+1);
+            if(var.charAt(2) != '0') {
+                degree.append("π").append(var.charAt(2));
+            }
+            if(var.charAt(4) != '0') {
+                degree.append("e").append(var.charAt(4));
+            }
+            //cs = "" | "pn" | "en" | "pnen"
+            SpannableStringBuilder cs = new SpannableStringBuilder(degree);
+            if(cs.length() > 0) {
+                cs.setSpan(new SuperscriptSpan(), 1, 2, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+                cs.setSpan(new RelativeSizeSpan(0.75f), 1, 2, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+            }
+            if(cs.length() > 2) {
+                cs.setSpan(new SuperscriptSpan(), 3, 4, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+                cs.setSpan(new RelativeSizeSpan(0.75f), 3, 4, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+
+            }
+            if(isNegative) {
+                outputAnswer.append("-");
+            } else {
+                if(outputAnswer.length() > 0) {
+                    outputAnswer.append("+");
+                }
+            }
+            if(var.charAt(0) > '1' || var.charAt(0) == '1' && cs.length() == 0) {
+                outputAnswer.append(var.charAt(0));
+            }
+            outputAnswer.append(cs);
+        }
+        return outputAnswer;
+    }
+
+    private double getRealValue(String answer) {
+        StringBuilder answerText = new StringBuilder(answer);
+        double result = 0d;
+        while(answerText.indexOf(")") != -1) {
+            int i = answerText.indexOf(")");
+            String var = answerText.substring(0, i+1);
+            answerText.delete(0, i+1);
+            if(answerText.length() > 0 && answerText.charAt(0) == '+') {
+                answerText.delete(0, 1);
+            }
+
+            int n = Integer.parseInt(var.substring(0, var.indexOf('(')));
+            int piPower = Integer.parseInt(var.substring(var.indexOf('(')+1, var.indexOf(',')));
+            int ePower = Integer.parseInt(var.substring(var.indexOf(',')+1, var.indexOf(')')));
+
+            result += n * Math.pow(Math.PI, piPower) * Math.pow(Math.E, ePower);
+        }
+        return result;
+    }
     private void refresh() {
-        textView_input.setText(input.toString());
-    }
-    private String[] getFormattedAnswer(String ans) {
-        return new String[] {ans.substring(0, ans.indexOf('/')), ans.substring(ans.indexOf('/')+1)};
+        textView_input.setText(input.getDisplayString());
     }
 }

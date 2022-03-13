@@ -1,6 +1,7 @@
 package com.calculator.fractioncalculator;
 
 public class InputChecker {
+    private static final char[] CONSTANTS = new char[] {'p', 'e', 'A'};
     private StringBuilder input;
     public InputChecker() {
         input = new StringBuilder();
@@ -15,6 +16,15 @@ public class InputChecker {
         }
         input.insert(i, str);
         return str.length();
+    }
+
+    private boolean isConstant(char c) {
+        for(char constant : CONSTANTS) {
+            if(c == constant) {
+                return true;
+            }
+        }
+        return false;
     }
 
     public int insertPoint(int i) {
@@ -84,7 +94,7 @@ public class InputChecker {
         char prev;
         if(i == 0 || (prev = input.charAt(i-1)) == '+' || prev == '-' || prev == '*' || prev == '/' || prev == '(') {
             str = "(";
-        } else if(prev == ')' || '0' <= prev && prev <= '9' || prev == 'p' || prev == 'e') {
+        } else if(prev == ')' || '0' <= prev && prev <= '9' || isConstant(prev)) {
             int count = 0;
             for(int j = 0; j < input.length(); j++) {
                 if(input.charAt(j) == '(') {
@@ -108,5 +118,18 @@ public class InputChecker {
     @Override
     public String toString() {
         return input.toString();
+    }
+
+    public String getDisplayString() {
+        StringBuilder output = new StringBuilder(input);
+        while(output.indexOf("p") != -1) {
+            int i = output.indexOf("p");
+            output.replace(i, i+1, "π");
+        }
+        if(output.indexOf("A") != -1) {
+            int i = output.indexOf("p");
+            output.replace(i, i+1, "Ans");
+        }
+        return output.toString();
     }
 }
