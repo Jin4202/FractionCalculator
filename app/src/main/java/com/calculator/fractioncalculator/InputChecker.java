@@ -127,7 +127,7 @@ public class InputChecker {
             output.replace(i, i+1, "π");
         }
         if(output.indexOf("A") != -1) {
-            int i = output.indexOf("p");
+            int i = output.indexOf("A");
             output.replace(i, i+1, "Ans");
         }
         return output.toString();

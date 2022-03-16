@@ -135,6 +135,7 @@ public class Calculator {
             if(currentChar == 'A') {
                 tokens.add(prevAns);
                 update();
+                continue;
             }
             //Parenthesis
             if(currentChar == '(') {

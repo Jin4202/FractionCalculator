@@ -25,14 +25,14 @@
         android:layout_marginTop="30dp"
         android:text="@string/answer_text"
         />
+
     <View
         android:id="@+id/lineBreaker"
         android:layout_width="wrap_content"
         android:layout_height="1dp"
-        android:background="#000000"
-        app:layout_constraintTop_toBottomOf="@id/text_answerNumerator"
+        android:background="?android:attr/textColorSecondary"
         app:layout_constraintStart_toStartOf="@id/text_answerNumerator"
-        />
+        app:layout_constraintTop_toBottomOf="@id/text_answerNumerator" />
     <TextView
         android:id="@+id/text_answerDenominator"
         android:layout_width="wrap_content"

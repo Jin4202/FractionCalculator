@@ -160,9 +160,15 @@ public class MainActivity extends AppCompatActivity {
                     String numerator = answer.getNumerator().getStringOutput();
                     String denominator = answer.getDenominator().getStringOutput();
                     if(answerFormatFraction) {
-                        textView_answerNumerator.setText(formatAnswer(numerator));
-                        view_answerLineBreaker.setVisibility(View.VISIBLE);
-                        textView_answerDenominator.setText(formatAnswer(denominator));
+                        if(getRealValue(numerator) == 0) {
+                            textView_answerNumerator.setText(String.valueOf(0));
+                            view_answerLineBreaker.setVisibility(View.VISIBLE);
+                            textView_answerDenominator.setText(String.valueOf(1));
+                        } else {
+                            textView_answerNumerator.setText(formatAnswer(numerator));
+                            view_answerLineBreaker.setVisibility(View.VISIBLE);
+                            textView_answerDenominator.setText(formatAnswer(denominator));
+                        }
                     } else {
                         textView_answerNumerator.setText(String.format("%s", getRealValue(numerator) / getRealValue(denominator)));
                         view_answerLineBreaker.setVisibility(View.INVISIBLE);
@@ -191,30 +197,35 @@ public class MainActivity extends AppCompatActivity {
         SpannableStringBuilder outputAnswer = new SpannableStringBuilder();
         StringBuilder answerText = new StringBuilder(answer);
         while(answerText.indexOf("(") != -1) {
-            StringBuilder degree = new StringBuilder();
+            // var = "+c(p,e)"
+            StringBuilder var = new StringBuilder(answerText.substring(0, answerText.indexOf(")")+1));
+            answerText.delete(0, answerText.indexOf(")")+1);
+            //Sign
             boolean isNegative = false;
-            // var = "c(p,e)"
-            if(answerText.indexOf("(")-2 >= 0 && answerText.charAt(answerText.indexOf("(")-2) == '-') {
+            if(var.charAt(0) == '-') {
                 isNegative = true;
             }
-            String var = answerText.substring(answerText.indexOf("(")-1, answerText.indexOf(")")+1);
-            answerText.delete(answerText.indexOf("(")-1, answerText.indexOf(")")+1);
-            if(var.charAt(2) != '0') {
-                degree.append("π").append(var.charAt(2));
+            if(var.charAt(0) == '+' || isNegative) {
+                var.deleteCharAt(0);
             }
-            if(var.charAt(4) != '0') {
-                degree.append("e").append(var.charAt(4));
+            //c
+            int c = Integer.parseInt(var.substring(0, var.indexOf("(")));
+            //(p,e)
+            int piPower = Integer.parseInt(var.substring(var.indexOf("(")+1, var.indexOf(",")));
+            int ePower = Integer.parseInt(var.substring(var.indexOf(",")+1, var.indexOf(")")));
+            SpannableStringBuilder pi = new SpannableStringBuilder();
+            if(piPower > 0) {
+                pi.append("π");
+                pi.append(String.valueOf(piPower));
+                pi.setSpan(new SuperscriptSpan(), 1, pi.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+                pi.setSpan(new RelativeSizeSpan(0.75f), 1, pi.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
             }
-            //cs = "" | "pn" | "en" | "pnen"
-            SpannableStringBuilder cs = new SpannableStringBuilder(degree);
-            if(cs.length() > 0) {
-                cs.setSpan(new SuperscriptSpan(), 1, 2, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-                cs.setSpan(new RelativeSizeSpan(0.75f), 1, 2, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-            }
-            if(cs.length() > 2) {
-                cs.setSpan(new SuperscriptSpan(), 3, 4, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-                cs.setSpan(new RelativeSizeSpan(0.75f), 3, 4, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-
+            SpannableStringBuilder e = new SpannableStringBuilder();
+            if(ePower > 0) {
+                e.append("e");
+                e.append(String.valueOf(ePower));
+                e.setSpan(new SuperscriptSpan(), 1, e.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+                e.setSpan(new RelativeSizeSpan(0.75f), 1, e.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
             }
             if(isNegative) {
                 outputAnswer.append("-");
@@ -223,10 +234,10 @@ public class MainActivity extends AppCompatActivity {
                     outputAnswer.append("+");
                 }
             }
-            if(var.charAt(0) > '1' || var.charAt(0) == '1' && cs.length() == 0) {
-                outputAnswer.append(var.charAt(0));
+            if(c > 1 || c == 1 && piPower == 0 && ePower == 0) {
+                outputAnswer.append(String.valueOf(c));
             }
-            outputAnswer.append(cs);
+            outputAnswer.append(pi).append(e);
         }
         return outputAnswer;
     }
