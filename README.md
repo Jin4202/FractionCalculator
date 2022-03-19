@@ -1,13 +1,11 @@
 # Fraction Calculator
+Creating a calculator that can represent the answer in both decimal and fraction format.   
 
 Core system codes are at https://github.com/Jin4202/FractionCalculator/tree/master/app/src/main/java/com/calculator/fractioncalculator    
 
 ## Project Environment Build
 - Framework: Android Studio   
 - Language: Java  
-
-## Project goal
-**Creating a calculator that can represent the answer in both decimal and fraction format.**   
 
 #### Main Challenges
 1. Transforming the answer from decimal to fraction   
