@@ -168,21 +168,19 @@ public class MainActivity extends AppCompatActivity {
                             textView_answerNumerator.setText(formatAnswer(numerator));
                             textView_answerDenominator.setText(formatAnswer(denominator));
                             view_answerLineBreaker.setVisibility(View.VISIBLE);
+                            textView_answerNumerator.measure(0,0);
+                            int n_len = textView_answerNumerator.getMeasuredWidth();
+                            int d_len = textView_answerDenominator.getMeasuredWidth();
+                            if(n_len >= d_len) {
+                                view_answerLineBreaker.getLayoutParams().width = n_len;
+                            } else {
+                                view_answerLineBreaker.getLayoutParams().width = d_len;
+                            }
                         }
                     } else {
                         textView_answerNumerator.setText(String.format("%s", getRealValue(numerator) / getRealValue(denominator)));
                         view_answerLineBreaker.setVisibility(View.INVISIBLE);
                         textView_answerDenominator.setText("");
-
-                        textView_answerNumerator.measure(0,0);
-                        int n_len = textView_answerNumerator.getMeasuredWidth();
-                        int d_len = textView_answerDenominator.getMeasuredWidth();
-                        if(n_len >= d_len) {
-                            view_answerLineBreaker.getLayoutParams().width = n_len;
-                        } else {
-                            view_answerLineBreaker.getLayoutParams().width = d_len;
-                        }
-
                     }
                 }
             } catch (WrongInputException e) {
