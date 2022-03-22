@@ -16,32 +16,42 @@
         android:layout_marginTop="50dp"
         android:text="@string/input_equation"
         />
-    <TextView
-        android:id="@+id/text_answerNumerator"
+    <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:layout_constraintTop_toBottomOf="@id/text_equation"
+        android:layout_marginTop="10dp"
+        android:orientation="vertical"
         app:layout_constraintEnd_toEndOf="parent"
-        android:layout_marginTop="30dp"
-        android:text="@string/answer_text"
-        />
+        app:layout_constraintTop_toBottomOf="@id/text_equation"
+        android:gravity="center_horizontal"
+        >
+        <TextView
+            android:id="@+id/text_answerNumerator"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/answer_text"
+            />
+        <View
+            android:id="@+id/lineBreaker"
+            android:layout_width="wrap_content"
+            android:layout_height="1dp"
+            android:background="?android:attr/textColorSecondary"
+            />
+        <TextView
+            android:id="@+id/text_answerDenominator"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/answer_text"
+            />
+    </LinearLayout>
 
-    <View
-        android:id="@+id/lineBreaker"
-        android:layout_width="wrap_content"
-        android:layout_height="1dp"
-        android:background="?android:attr/textColorSecondary"
-        app:layout_constraintStart_toStartOf="@id/text_answerNumerator"
-        app:layout_constraintTop_toBottomOf="@id/text_answerNumerator" />
-    <TextView
-        android:id="@+id/text_answerDenominator"
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideline_keypad"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:layout_constraintTop_toBottomOf="@id/lineBreaker"
-        app:layout_constraintStart_toStartOf="@id/text_answerNumerator"
-        android:text="@string/answer_text"
+        app:layout_constraintGuide_percent="0.5"
+        android:orientation="horizontal"
         />
-
     <Button
         android:id="@+id/button_num7"
         android:layout_width="0dp"
@@ -52,8 +62,7 @@
         android:text="@string/_7"
 
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/text_answerNumerator"
-
+        app:layout_constraintTop_toBottomOf="@id/guideline_keypad"
         />
     <Button
         android:id="@+id/button_num8"
@@ -155,7 +164,7 @@
         app:layout_constraintTop_toTopOf="@id/button_sign"
         android:layout_marginStart="10dp"
         android:text="@string/_0"
-    />
+        />
     <Button
         android:id="@+id/button_point"
         android:layout_width="0dp"
@@ -195,7 +204,9 @@
         app:layout_constraintTop_toTopOf="@id/button_num3"
         android:layout_marginStart="10dp"
         android:text="@string/multiply"
+        android:textAllCaps="false"
         />
+
     <Button
         android:id="@+id/button_division"
         android:layout_width="0dp"
@@ -285,6 +296,7 @@
         app:layout_constraintTop_toTopOf="@id/button_PI"
         android:layout_marginStart="10dp"
         android:text="@string/euler"
+        android:textAllCaps="false"
         />
     <Button
         android:id="@+id/button_formatter"

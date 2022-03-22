@@ -46,9 +46,9 @@ public class MainActivity extends AppCompatActivity {
         textView_answerNumerator = findViewById(R.id.text_answerNumerator);
         view_answerLineBreaker = findViewById(R.id.lineBreaker);
         textView_answerDenominator = findViewById(R.id.text_answerDenominator);
-        textView_answerNumerator.setText("1");
-        view_answerLineBreaker.setVisibility(View.VISIBLE);
-        textView_answerDenominator.setText("1");
+        textView_answerNumerator.setText("");
+        view_answerLineBreaker.setVisibility(View.INVISIBLE);
+        textView_answerDenominator.setText("");
 
         input = new InputChecker();
         inputIndex = 0;
@@ -168,24 +168,21 @@ public class MainActivity extends AppCompatActivity {
                             textView_answerNumerator.setText(formatAnswer(numerator));
                             textView_answerDenominator.setText(formatAnswer(denominator));
                             view_answerLineBreaker.setVisibility(View.VISIBLE);
-
-
-                            Log.d("num", "text: " + textView_answerNumerator.getText().toString());
-                            Log.d("num", "len: " + textView_answerNumerator.length());
-                            Log.d("denom", "text: " + textView_answerDenominator.getText().toString());
-                            Log.d("denom", "len: " + textView_answerDenominator.length());
-                            /*
-                            if(textView_answerNumerator.length() > textView_answerDenominator.length()) {
-                                textView_answerDenominator.setEms(textView_answerNumerator.length());
-                            } else {
-                                textView_answerNumerator.setEms(textView_answerDenominator.length());
-                            }
-                            */
                         }
                     } else {
                         textView_answerNumerator.setText(String.format("%s", getRealValue(numerator) / getRealValue(denominator)));
                         view_answerLineBreaker.setVisibility(View.INVISIBLE);
                         textView_answerDenominator.setText("");
+
+                        textView_answerNumerator.measure(0,0);
+                        int n_len = textView_answerNumerator.getMeasuredWidth();
+                        int d_len = textView_answerDenominator.getMeasuredWidth();
+                        if(n_len >= d_len) {
+                            view_answerLineBreaker.getLayoutParams().width = n_len;
+                        } else {
+                            view_answerLineBreaker.getLayoutParams().width = d_len;
+                        }
+
                     }
                 }
             } catch (WrongInputException e) {
