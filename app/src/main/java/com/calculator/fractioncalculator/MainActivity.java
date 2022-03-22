@@ -42,18 +42,18 @@ public class MainActivity extends AppCompatActivity {
         textView_input = findViewById(R.id.text_equation);
         textView_input.setText("");
 
+
         textView_answerNumerator = findViewById(R.id.text_answerNumerator);
         view_answerLineBreaker = findViewById(R.id.lineBreaker);
         textView_answerDenominator = findViewById(R.id.text_answerDenominator);
-        textView_answerNumerator.setText("");
-        view_answerLineBreaker.setVisibility(View.INVISIBLE);
-        textView_answerDenominator.setText("");
-        textView_answerDenominator.setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
+        textView_answerNumerator.setText("1");
+        view_answerLineBreaker.setVisibility(View.VISIBLE);
+        textView_answerDenominator.setText("1");
 
         input = new InputChecker();
         inputIndex = 0;
 
-        answerFormatFraction = false;
+        answerFormatFraction = true;
 
         //Inputs
         findViewById(R.id.button_num0).setOnClickListener(view -> {
@@ -166,8 +166,21 @@ public class MainActivity extends AppCompatActivity {
                             textView_answerDenominator.setText(String.valueOf(1));
                         } else {
                             textView_answerNumerator.setText(formatAnswer(numerator));
-                            view_answerLineBreaker.setVisibility(View.VISIBLE);
                             textView_answerDenominator.setText(formatAnswer(denominator));
+                            view_answerLineBreaker.setVisibility(View.VISIBLE);
+
+
+                            Log.d("num", "text: " + textView_answerNumerator.getText().toString());
+                            Log.d("num", "len: " + textView_answerNumerator.length());
+                            Log.d("denom", "text: " + textView_answerDenominator.getText().toString());
+                            Log.d("denom", "len: " + textView_answerDenominator.length());
+                            /*
+                            if(textView_answerNumerator.length() > textView_answerDenominator.length()) {
+                                textView_answerDenominator.setEms(textView_answerNumerator.length());
+                            } else {
+                                textView_answerNumerator.setEms(textView_answerDenominator.length());
+                            }
+                            */
                         }
                     } else {
                         textView_answerNumerator.setText(String.format("%s", getRealValue(numerator) / getRealValue(denominator)));
@@ -194,6 +207,7 @@ public class MainActivity extends AppCompatActivity {
 
     //translate into user friendly format
     private SpannableStringBuilder formatAnswer(String answer) {
+        //Log.d("input", answer);
         SpannableStringBuilder outputAnswer = new SpannableStringBuilder();
         StringBuilder answerText = new StringBuilder(answer);
         while(answerText.indexOf("(") != -1) {
@@ -239,6 +253,7 @@ public class MainActivity extends AppCompatActivity {
             }
             outputAnswer.append(pi).append(e);
         }
+        //Log.d("output", outputAnswer.toString());
         return outputAnswer;
     }
 
