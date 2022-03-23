@@ -19,6 +19,8 @@ import com.calculator.fractioncalculator.calculation.ParenthesesNotMatchingExcep
 import com.calculator.fractioncalculator.calculation.WrongInputException;
 import com.calculator.fractioncalculator.calculation.ZeroDivisionException;
 
+import java.util.ArrayList;
+
 public class MainActivity extends AppCompatActivity {
 
     private TextView textView_input;
@@ -56,46 +58,19 @@ public class MainActivity extends AppCompatActivity {
         answerFormatFraction = true;
 
         //Inputs
-        findViewById(R.id.button_num0).setOnClickListener(view -> {
-            inputIndex += input.insertNumber('0', inputIndex);
-            refresh();
-        });
-        findViewById(R.id.button_num1).setOnClickListener(view -> {
-            inputIndex += input.insertNumber('1', inputIndex);
-            refresh();
-        });
-        findViewById(R.id.button_num2).setOnClickListener(view -> {
-            inputIndex += input.insertNumber('2', inputIndex);
-            refresh();
-        });
-        findViewById(R.id.button_num3).setOnClickListener(view -> {
-            inputIndex += input.insertNumber('3', inputIndex);
-            refresh();
-        });
-        findViewById(R.id.button_num4).setOnClickListener(view -> {
-            inputIndex += input.insertNumber('4', inputIndex);
-            refresh();
-        });
-        findViewById(R.id.button_num5).setOnClickListener(view -> {
-            inputIndex += input.insertNumber('5', inputIndex);
-            refresh();
-        });
-        findViewById(R.id.button_num6).setOnClickListener(view -> {
-            inputIndex += input.insertNumber('6', inputIndex);
-            refresh();
-        });
-        findViewById(R.id.button_num7).setOnClickListener(view -> {
-            inputIndex += input.insertNumber('7', inputIndex);
-            refresh();
-        });
-        findViewById(R.id.button_num8).setOnClickListener(view -> {
-            inputIndex += input.insertNumber('8', inputIndex);
-            refresh();
-        });
-        findViewById(R.id.button_num9).setOnClickListener(view -> {
-            inputIndex += input.insertNumber('9', inputIndex);
-            refresh();
-        });
+
+        //Numbers
+        Button[] numberPad = new Button[10];
+        for(int i = 0; i < 10; i++) {
+            String id_name = "button_num"+i;
+            int id = getResources().getIdentifier(id_name, "id", getPackageName());
+            numberPad[i] = findViewById(id);
+            int finalI = i;
+            numberPad[i].setOnClickListener(view -> {
+                inputIndex += input.insertNumber((char)('0'+ finalI), inputIndex);
+                refresh();
+            });
+        }
         findViewById(R.id.button_point).setOnClickListener(view -> {
             inputIndex += input.insertPoint(inputIndex);
             refresh();
@@ -132,15 +107,17 @@ public class MainActivity extends AppCompatActivity {
             inputIndex += input.insertConstant('e', inputIndex);
             refresh();
         });
-        findViewById(R.id.button_sign).setOnClickListener(view -> {
+        Button button_sign = findViewById(R.id.button_sign);
+        button_sign.setOnClickListener(view -> {
             inputIndex += input.insertSign(inputIndex);
             refresh();
         });
-        findViewById(R.id.button_answer).setOnClickListener(view -> {
+
+        Button button_ans = findViewById(R.id.button_answer);
+        button_ans.setOnClickListener(view -> {
             inputIndex += input.insertConstant('A', inputIndex);
             refresh();
         });
-
 
         //Functions
         findViewById(R.id.button_allclear).setOnClickListener(view -> {
@@ -171,11 +148,7 @@ public class MainActivity extends AppCompatActivity {
                             textView_answerNumerator.measure(0,0);
                             int n_len = textView_answerNumerator.getMeasuredWidth();
                             int d_len = textView_answerDenominator.getMeasuredWidth();
-                            if(n_len >= d_len) {
-                                view_answerLineBreaker.getLayoutParams().width = n_len;
-                            } else {
-                                view_answerLineBreaker.getLayoutParams().width = d_len;
-                            }
+                            view_answerLineBreaker.getLayoutParams().width = Math.max(n_len, d_len);
                         }
                     } else {
                         textView_answerNumerator.setText(String.format("%s", getRealValue(numerator) / getRealValue(denominator)));
@@ -194,10 +167,26 @@ public class MainActivity extends AppCompatActivity {
                 Toast.makeText(this, "Can not divide by zero.", Toast.LENGTH_SHORT).show();
             }
         });
-        findViewById(R.id.button_formatter).setOnClickListener(view -> {
+        Button button_formatter = findViewById(R.id.button_formatter);
+        button_formatter.setOnClickListener(view -> {
             answerFormatFraction = !answerFormatFraction;
             button_equal.performClick();
         });
+
+        //setting attributes
+        ArrayList<TextView> singleLineViews = new ArrayList<>();
+        singleLineViews.add(textView_input);
+        singleLineViews.add(textView_answerNumerator);
+        singleLineViews.add(textView_answerDenominator);
+        singleLineViews.add(button_sign);
+        singleLineViews.add(button_ans);
+        singleLineViews.add(button_formatter);
+
+        for(TextView v : singleLineViews) {
+            v.setMaxLines(1);
+            v.setAutoSizeTextTypeWithDefaults(TextView.AUTO_SIZE_TEXT_TYPE_UNIFORM);
+        }
+
     }
 
     //translate into user friendly format
