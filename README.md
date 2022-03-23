@@ -3,11 +3,20 @@ Creating a calculator that can represent the answer in both decimal and fraction
 
 Core system codes are at https://github.com/Jin4202/FractionCalculator/tree/master/app/src/main/java/com/calculator/fractioncalculator    
 
+## Functions
+Switching the answer type into decimal and fraction by pressing the [A/B] button
+   
+<img src="/RmImgs/test1.png" width="300px" height="500px" title="Calculation_1-1"></img>
+<img src="/RmImgs/test2.png" width="300px" height="500px" title="Calculation_1-2"></img><br/>
+   
+<img src="/RmImgs/test3.png" width="300px" height="500px" title="Calculation_1-1"></img>
+<img src="/RmImgs/test4.png" width="300px" height="500px" title="Calculation_1-2"></img><br/>
+
 ## Project Environment Build
 - Framework: Android Studio   
 - Language: Java  
 
-#### Main Challenges
+## Main Challenges
 1. Transforming the answer from decimal to fraction   
 Solution: Independently build the arithmetic operations and input parsers.   
 Ex. inputs: n1, n2
